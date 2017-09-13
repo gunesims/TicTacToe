@@ -58,7 +58,7 @@
                                 </connections>
                             </button>
                             <button opaque="NO" tag="4" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="KyO-uT-UsY">
-                                <rect key="frame" x="133" y="279.5" width="108" height="108"/>
+                                <rect key="frame" x="133" y="280" width="108" height="108"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="100"/>
                                 <connections>
@@ -97,10 +97,22 @@
                                     <action selector="buttonSelect:" destination="BYZ-38-t0r" eventType="touchUpInside" id="hOe-8T-7ZU"/>
                                 </connections>
                             </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Winner is: " textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="OfL-D2-QN2">
+                                <rect key="frame" x="128" y="78" width="118" height="34"/>
+                                <color key="backgroundColor" red="0.46501906139999999" green="0.5568170804" blue="1" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                                <color key="tintColor" red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="118" id="BM2-f0-gRL"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="20"/>
+                                <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <color key="backgroundColor" red="0.88235294119999996" green="0.34509803919999998" blue="0.16078431369999999" alpha="1" colorSpace="calibratedRGB"/>
                         <constraints>
                             <constraint firstItem="MVh-os-dVa" firstAttribute="width" secondItem="KyO-uT-UsY" secondAttribute="width" id="3Mc-GT-j6z"/>
+                            <constraint firstItem="rns-5u-wXw" firstAttribute="top" secondItem="OfL-D2-QN2" secondAttribute="bottom" constant="51" id="3XI-Nm-pDo"/>
                             <constraint firstItem="dsc-zO-chc" firstAttribute="top" secondItem="KyO-uT-UsY" secondAttribute="bottom" constant="7.5" id="5Oz-F7-7aQ"/>
                             <constraint firstItem="KyO-uT-UsY" firstAttribute="top" secondItem="MVh-os-dVa" secondAttribute="bottom" constant="8.5" id="ABB-VM-kf7"/>
                             <constraint firstItem="2d2-QC-4yl" firstAttribute="width" secondItem="KyO-uT-UsY" secondAttribute="width" id="Bzt-F4-GlR"/>
@@ -113,10 +125,12 @@
                             <constraint firstItem="dsc-zO-chc" firstAttribute="leading" secondItem="KyO-uT-UsY" secondAttribute="trailing" constant="-108" id="Ru8-zE-viB"/>
                             <constraint firstItem="KyO-uT-UsY" firstAttribute="top" secondItem="ebO-H4-iu9" secondAttribute="bottom" constant="-107.5" id="UvQ-Td-4bA"/>
                             <constraint firstItem="KyO-uT-UsY" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="VUZ-ZI-ILl"/>
+                            <constraint firstItem="OfL-D2-QN2" firstAttribute="centerX" secondItem="rns-5u-wXw" secondAttribute="centerX" id="X2z-0M-YQT"/>
                             <constraint firstItem="KyO-uT-UsY" firstAttribute="leading" secondItem="2d2-QC-4yl" secondAttribute="trailing" constant="10" id="XHR-Fc-1NF"/>
                             <constraint firstItem="ebO-H4-iu9" firstAttribute="width" secondItem="KyO-uT-UsY" secondAttribute="width" id="XMU-vV-nhn"/>
                             <constraint firstItem="2d2-QC-4yl" firstAttribute="top" secondItem="KyO-uT-UsY" secondAttribute="bottom" constant="7.5" id="a2B-YA-It6"/>
                             <constraint firstItem="KyO-uT-UsY" firstAttribute="top" secondItem="rns-5u-wXw" secondAttribute="bottom" constant="8.5" id="bfm-T5-4KL"/>
+                            <constraint firstItem="OfL-D2-QN2" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="58" id="cLk-8q-SJh"/>
                             <constraint firstItem="cYA-Gr-qWg" firstAttribute="width" secondItem="KyO-uT-UsY" secondAttribute="width" id="clL-T0-kwC"/>
                             <constraint firstItem="MVh-os-dVa" firstAttribute="height" secondItem="KyO-uT-UsY" secondAttribute="height" id="eSC-gh-1D6"/>
                             <constraint firstItem="KyO-uT-UsY" firstAttribute="leading" secondItem="MVh-os-dVa" secondAttribute="trailing" constant="10" id="euE-iS-m10"/>
@@ -136,6 +150,9 @@
                             <constraint firstItem="KyO-uT-UsY" firstAttribute="top" secondItem="u4d-y3-8F0" secondAttribute="bottom" constant="8.5" id="zgo-mV-oSv"/>
                         </constraints>
                     </view>
+                    <connections>
+                        <outlet property="winnerLabel" destination="OfL-D2-QN2" id="2xD-Q1-cWZ"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
