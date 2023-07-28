@@ -15,44 +15,30 @@ struct GameView: View {
     }
 }
 
-
 struct BoardView: View {
-    @State private var tictactoe = TicTacToe()
+    @StateObject private var ticTacToeGame = TicTacToeGame()
+    @State private var gameOver = false
     
     var body: some View {
-//        LazyVGrid(columns: [GridItem(), GridItem(), GridItem()]) {
-//            ForEach(tictactoe.board, id: \.self) { item in
-//                SquareView(sign: Sign.none)
-//
-//            }
-//
-//        }
-       
-        Grid {
-
-            GridRow {
-                SquareView(sign: Sign.x)
-                SquareView(sign: Sign.x)
-                SquareView(sign: Sign.x)
-            }
-
-            GridRow {
-                SquareView(sign: Sign.x)
-                SquareView(sign: Sign.x)
-                SquareView(sign: Sign.x)
-            }
-
-            GridRow {
-                SquareView(sign: Sign.x)
-                SquareView(sign: Sign.x)
-                SquareView(sign: Sign.x)
+        LazyVGrid(columns: [GridItem(), GridItem(), GridItem()]) {
+            ForEach(ticTacToeGame.game.board, id: \.self) { item in
+                SquareView(square: item)
+                    .onTapGesture {
+                        ticTacToeGame.squareClicked(square: item)
+                    }
             }
         }
+        .alert("Game Over", isPresented: $gameOver) {
+            Button("OK", role: .cancel) { }
+        }
     }
+    
+    
+    
 }
 
 struct SquareView: View {
-    var sign: Sign
+    let square: Square
     
     var body: some View {
         ZStack {
@@ -60,14 +46,10 @@ struct SquareView: View {
                 .fill(.clear)
                 .border(.black, width: 2.0)
                 .frame(width: 100,height: 100)
-            Text(sign.rawValue)
+            Text(square.symbol.rawValue)
                 .font(.system(size: 35, weight: .bold))
         }
-        .onTapGesture {
-            
-        }
-        
-        
+        .background(.white)
     }
 }
 

@@ -53,6 +53,14 @@
 			path = Model;
 			sourceTree = "<group>";
 		};
+		C4E5DAA42A741DEE0026059E /* ViewModel */ = {
+			isa = PBXGroup;
+			children = (
+				C417F8F92A534DAB0051602E /* TicTacToeGame.swift */,
+			);
+			path = ViewModel;
+			sourceTree = "<group>";
+		};
 		D11B60031F64661C00DEFEF1 = {
 			isa = PBXGroup;
 			children = (
@@ -73,8 +81,8 @@
 			isa = PBXGroup;
 			children = (
 				C417F8ED2A48A9DD0051602E /* TicTacToeApp.swift */,
-				C417F8F92A534DAB0051602E /* TicTacToeGame.swift */,
 				C417F8F22A4A0BB90051602E /* Model */,
+				C4E5DAA42A741DEE0026059E /* ViewModel */,
 				C417F8F12A48AA340051602E /* Views */,
 				D11B60111F64661C00DEFEF1 /* ViewController.swift */,
 				D11B60161F64661C00DEFEF1 /* Assets.xcassets */,
