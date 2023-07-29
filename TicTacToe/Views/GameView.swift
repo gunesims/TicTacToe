@@ -17,7 +17,6 @@ struct GameView: View {
 
 struct BoardView: View {
     @StateObject private var ticTacToeGame = TicTacToeGame()
-    @State private var gameOver = false
     
     var body: some View {
         LazyVGrid(columns: [GridItem(), GridItem(), GridItem()]) {
@@ -28,8 +27,12 @@ struct BoardView: View {
                     }
             }
         }
-        .alert("Game Over", isPresented: $gameOver) {
-            Button("OK", role: .cancel) { }
+        .alert("Game Over", isPresented: $ticTacToeGame.game.gameEnded) {
+            Button("OK", role: .cancel) {
+                ticTacToeGame.game = TicTacToe()
+            }
+        } message: {
+            Text(ticTacToeGame.game.gameState == .win ? "Winner is \(ticTacToeGame.game.winner == .userOne ? "User One" : "User Two")" : "It's a draw")
         }
     }
     

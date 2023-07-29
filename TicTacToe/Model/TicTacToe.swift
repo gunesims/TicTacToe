@@ -35,8 +35,9 @@ struct Square: Hashable {
 
 
 struct TicTacToe {
-
     var board = Array<Square>()
+    var gameEnded = false
+    var winner = Player.none
     
     var gameState = GameState.none
     var currentPlayer = Player.none
@@ -54,19 +55,7 @@ struct TicTacToe {
         }
     }
     
-    func winnerFound() -> Bool {
-//        var currentCombo: Array<Int>
-//
-//        for winningCombination in winningCombinations {
-//            currentCombo = winningCombination
-//
-//            for combo in winningCombination {
-//
-//            }
-//        }
 
-        return false
-    }
 }
 
 
