@@ -1,2 +1,3 @@
-# TicTacToe
-simple Tic-Tac-Toe game for iOS 10.
+# TicTacToe - iOS App
+
+Simple game using SwiftUI.
