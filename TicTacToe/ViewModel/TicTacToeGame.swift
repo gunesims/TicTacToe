@@ -30,9 +30,11 @@ class TicTacToeGame: ObservableObject {
         if checkWinner() {
             game.winner = game.currentPlayer
             game.gameState = .win
+            checkScore()
             game.gameEnded = true
         } else if checkDraw() {
             game.gameState = .draw
+            checkScore()
             game.gameEnded = true
         } else {
             toggleCurrentPlayer()
@@ -40,7 +42,7 @@ class TicTacToeGame: ObservableObject {
     }
     
     func checkWinner() -> Bool {
-
+        
         for combo in game.winningCombinations {
             let currentSymbol = game.board[combo[0]].symbol
             var counter = 0
@@ -59,7 +61,7 @@ class TicTacToeGame: ObservableObject {
                 return true
             }
         }
-
+        
         return false
     }
     
@@ -73,14 +75,50 @@ class TicTacToeGame: ObservableObject {
         return true
     }
     
+    func checkScore() {
+        if game.gameState == .win {
+            if game.currentPlayer == .playerOne {
+                game.playerOneScore += 1
+            } else {
+                game.playerTwoScore += 1
+            }
+        } else if game.gameState == .draw {
+            game.drawScore += 1
+        }
+    }
+    
     func initializeGame() {
         game.gameState = .playing
         game.currentPlayer = game.playerOne
     }
     
+    func resetScore() {
+        game.playerOneScore = 0
+        game.playerTwoScore = 0
+        game.drawScore = 0
+    }
+    
+    func getPlayerOneScore() -> Int {
+        game.playerOneScore
+    }
+    
+    func getPlayerTwoScore() -> Int {
+        game.playerTwoScore
+    }
+    
+    
     func getCurrentPlayerSymbol() -> Symbol {
         game.currentPlayer == game.playerOne ? game.playerOneSymbol : game.playerTwoSymbol
     }
+    
+    func resetBoard() {
+        game.board = Array<Square>()
+        
+        for number in 0..<9 {
+            game.board.append(Square(symbol: .none, id: number))
+        }
+    }
+    
     
     func toggleCurrentPlayer() {
         if game.currentPlayer == Player.none {

@@ -15,9 +15,8 @@ enum Symbol: String {
 }
 
 enum Player {
-    case userOne
-    case userTwo
-    case computer
+    case playerOne
+    case playerTwo
     case none
 }
 
@@ -42,10 +41,15 @@ struct TicTacToe {
     var gameState = GameState.none
     var currentPlayer = Player.none
     
-    var playerOne = Player.userOne
-    var playerTwo = Player.userTwo
+    var playerOne = Player.playerOne
+    var playerTwo = Player.playerTwo
+    
     var playerOneSymbol = Symbol.x
     var playerTwoSymbol = Symbol.o
+    
+    var playerOneScore = 0
+    var playerTwoScore = 0
+    var drawScore = 0
     
     let winningCombinations = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]]
     

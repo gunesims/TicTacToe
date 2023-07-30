@@ -19,20 +19,55 @@ struct BoardView: View {
     @StateObject private var ticTacToeGame = TicTacToeGame()
     
     var body: some View {
-        LazyVGrid(columns: [GridItem(), GridItem(), GridItem()]) {
-            ForEach(ticTacToeGame.game.board, id: \.self) { item in
-                SquareView(square: item)
-                    .onTapGesture {
-                        ticTacToeGame.squareClicked(square: item)
-                    }
+        
+        VStack {
+            Spacer()
+            HStack(spacing: 50) {
+                VStack {
+                    Text("Player One")
+                    Text("\(ticTacToeGame.getPlayerOneScore())")
+                }
+                VStack {
+                    Text("Player Two")
+                    Text("\(ticTacToeGame.getPlayerTwoScore())")
+                }
             }
-        }
-        .alert("Game Over", isPresented: $ticTacToeGame.game.gameEnded) {
-            Button("OK", role: .cancel) {
-                ticTacToeGame.game = TicTacToe()
+            
+            Spacer()
+            
+            LazyVGrid(columns: [GridItem(), GridItem(), GridItem()]) {
+                ForEach(ticTacToeGame.game.board, id: \.self) { item in
+                    SquareView(square: item)
+                        .onTapGesture {
+                            ticTacToeGame.squareClicked(square: item)
+                        }
+                }
             }
-        } message: {
-            Text(ticTacToeGame.game.gameState == .win ? "Winner is \(ticTacToeGame.game.winner == .userOne ? "User One" : "User Two")" : "It's a draw")
+            .alert("Game Over", isPresented: $ticTacToeGame.game.gameEnded) {
+                Button("OK", role: .cancel) {
+                    ticTacToeGame.resetBoard()
+                }
+            } message: {
+                Text(ticTacToeGame.game.gameState == .win ? "Winner is \(ticTacToeGame.game.winner == .playerOne ? "User One" : "User Two")" : "It's a draw")
+            }
+            
+            Spacer()
+            
+            VStack(spacing: 30) {
+                Button {
+                    ticTacToeGame.resetBoard()
+                } label: {
+                    Text("Restart Game")
+                }
+                
+                Button {
+                    ticTacToeGame.resetScore()
+                } label: {
+                    Text("Reset Score")
+                }
+            }
+            
+            Spacer()
         }
     }
     
