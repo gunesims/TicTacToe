@@ -97,14 +97,24 @@ struct SquareView: View {
         ZStack {
             Rectangle()
                 .fill(.clear)
-            Text(square.symbol.rawValue)
-                .font(.system(size: 35, weight: .bold))
+            
+            if square.symbol == .o {
+                OSymbolView()
+                    .padding(20)
+            } else if square.symbol == .x {
+                XSymbolView()
+                    .padding(25)
+            }
+//            Text(square.symbol.rawValue)
+//                .font(.system(size: 35, weight: .bold))
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .aspectRatio(1, contentMode: .fit)
         .background(Color.primaryColor)
     }
 }
+
+
 
 struct ButtonView: View {
     @StateObject var ticTacToeGame: TicTacToeGame
@@ -141,6 +151,53 @@ struct ButtonView: View {
     }
 }
 
+struct OSymbolView: View {
+    @State private var drawingStroke: CGFloat = 0.0
+    
+    let animation = Animation
+        .easeOut(duration: 0.5)
+    
+    var body: some View {
+        Circle()
+            .trim(from: CGFloat(0), to: drawingStroke)
+            .stroke(style: StrokeStyle(lineWidth: 20, lineCap: .round))
+            .animation(animation, value: drawingStroke)
+            .rotationEffect(.degrees(-90))
+            .onAppear {
+                drawingStroke = CGFloat(1.0)
+            }
+    }
+}
+
+struct XSymbolView: View {
+    @State private var drawingStroke: CGFloat = 0.0
+    
+    let animation = Animation
+        .easeOut(duration: 0.5)
+    
+    var body: some View {
+        XSymbol()
+            .trim(from: 0, to: CGFloat(drawingStroke))
+            .stroke(style: StrokeStyle(lineWidth: 20, lineCap: .round))
+            .animation(animation, value: drawingStroke)
+            .onAppear {
+                drawingStroke = CGFloat(1.0)
+            }
+    }
+}
+
+struct XSymbol: Shape {
+    func path(in rect: CGRect) -> Path {
+        var path = Path()
+        
+        path.move(to: CGPoint(x: rect.minX, y: rect.minY))
+        path.addLine(to: CGPoint(x: rect.maxX, y: rect.maxY))
+        path.move(to: CGPoint(x: rect.minX, y: rect.maxY))
+        path.addLine(to: CGPoint(x: rect.maxX, y: rect.minY))
+
+        return path
+    }
+}
 
 extension Color {
     static var primaryColor: Color {
