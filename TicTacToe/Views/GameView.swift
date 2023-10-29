@@ -97,7 +97,6 @@ struct SquareView: View {
         ZStack {
             Rectangle()
                 .fill(.clear)
-            
             if square.symbol == .o {
                 OSymbolView()
                     .padding(20)
@@ -105,8 +104,7 @@ struct SquareView: View {
                 XSymbolView()
                     .padding(25)
             }
-//            Text(square.symbol.rawValue)
-//                .font(.system(size: 35, weight: .bold))
+
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .aspectRatio(1, contentMode: .fit)
@@ -163,7 +161,7 @@ struct OSymbolView: View {
             .stroke(style: StrokeStyle(lineWidth: 20, lineCap: .round))
             .animation(animation, value: drawingStroke)
             .rotationEffect(.degrees(-90))
-            .onAppear {
+            .task {
                 drawingStroke = CGFloat(1.0)
             }
     }

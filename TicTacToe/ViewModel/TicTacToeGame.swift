@@ -112,7 +112,7 @@ class TicTacToeGame: ObservableObject {
     }
     
     func resetBoard() {
-        game.board = Array<Square>()
+        game.board.removeAll()
         
         for number in 0..<9 {
             game.board.append(Square(symbol: .none, id: number))
