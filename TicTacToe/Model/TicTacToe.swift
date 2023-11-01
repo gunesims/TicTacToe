@@ -20,6 +20,12 @@ enum Player {
     case none
 }
 
+enum GameMode {
+    case ai
+    case friend
+    case none
+}
+
 enum GameState {
     case playing
     case win
@@ -37,6 +43,7 @@ struct TicTacToe {
     var board = Array<Square>()
     var gameEnded = false
     var winner = Player.none
+    var gameMode = GameMode.none
     
     var gameState = GameState.none
     var currentPlayer = Player.none

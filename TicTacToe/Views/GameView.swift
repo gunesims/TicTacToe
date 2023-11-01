@@ -9,6 +9,7 @@
 import SwiftUI
 
 struct GameView: View {
+    let gameMode: GameMode
     @StateObject private var ticTacToeGame = TicTacToeGame()
     
     var body: some View {
@@ -27,7 +28,10 @@ struct GameView: View {
             
             Spacer()
         }
-        .background(Color.primaryColor)
+        .background(Color.background)
+        .onAppear {
+            ticTacToeGame.game.gameMode = gameMode
+        }
     }
 }
 
@@ -44,7 +48,7 @@ struct BoardView: View {
                     }
             }
         }
-        .background(.black)
+        .background(Color.boardGrid)
         .padding()
         .alert("Game Over", isPresented: $ticTacToeGame.game.gameEnded) {
             Button("OK", role: .cancel) {
@@ -62,26 +66,26 @@ struct ScoreView: View {
     var body: some View {
         ZStack {
             RoundedRectangle(cornerRadius: 20)
-                .stroke(Color.secondaryColor, lineWidth: 2)
+                .stroke(Color.button, lineWidth: 2)
             
             HStack(spacing: 20) {
                 VStack(spacing: 10) {
                     Text("Player One")
                     Text("\(ticTacToeGame.getPlayerOneScore())")
                 }
-                .foregroundColor(.secondaryColor)
+                .foregroundColor(.button)
                 .bold()
                 .font(.title2)
                 
                 
                 Divider()
-                    .background(Color.secondaryColor)
+                    .background(Color.button)
                 
                 VStack(spacing: 10) {
                     Text("Player Two")
                     Text("\(ticTacToeGame.getPlayerTwoScore())")
                 }
-                .foregroundColor(.secondaryColor)
+                .foregroundColor(.button)
                 .bold()
                 .font(.title2)
             }
@@ -108,7 +112,7 @@ struct SquareView: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .aspectRatio(1, contentMode: .fit)
-        .background(Color.primaryColor)
+        .background(Color.background)
     }
 }
 
@@ -118,18 +122,19 @@ struct ButtonView: View {
     @StateObject var ticTacToeGame: TicTacToeGame
     
     var body: some View {
-        VStack(spacing: 15) {
+        HStack(spacing: 10) {
             Button {
                 ticTacToeGame.resetBoard()
             } label: {
                 
                 ZStack {
-                    RoundedRectangle(cornerRadius: 20)
-                        .foregroundColor(.secondaryColor)
+                    RoundedRectangle(cornerRadius: 10)
+                        .foregroundColor(.button)
                     Text("Restart Game")
+                        .bold()
                 }
                 .frame(width: 150, height: 50)
-                .foregroundColor(.primaryColor)
+                .foregroundColor(.background)
                 .bold()
             }
             
@@ -137,12 +142,13 @@ struct ButtonView: View {
                 ticTacToeGame.resetScore()
             } label: {
                 ZStack {
-                    RoundedRectangle(cornerRadius: 20)
-                        .foregroundColor(.secondaryColor)
+                    RoundedRectangle(cornerRadius: 10)
+                        .foregroundColor(.button)
                     Text("Reset Score")
+                        .bold()
                 }
                 .frame(width: 150, height: 50)
-                .foregroundColor(.primaryColor)
+                .foregroundColor(.background)
                 .bold()
             }
         }
@@ -159,6 +165,7 @@ struct OSymbolView: View {
         Circle()
             .trim(from: CGFloat(0), to: drawingStroke)
             .stroke(style: StrokeStyle(lineWidth: 20, lineCap: .round))
+            .fill(Color.OSymbol)
             .animation(animation, value: drawingStroke)
             .rotationEffect(.degrees(-90))
             .task {
@@ -177,6 +184,7 @@ struct XSymbolView: View {
         XSymbol()
             .trim(from: 0, to: CGFloat(drawingStroke))
             .stroke(style: StrokeStyle(lineWidth: 20, lineCap: .round))
+            .fill(Color.XSymbol)
             .animation(animation, value: drawingStroke)
             .onAppear {
                 drawingStroke = CGFloat(1.0)
@@ -198,19 +206,36 @@ struct XSymbol: Shape {
 }
 
 extension Color {
-    static var primaryColor: Color {
+    static var background: Color {
 //        Color(red: 246/255, green: 244/255, blue: 235/255)
-        Color(red: 241/255, green: 246/255, blue: 249/255)
+//        Color(red: 241/255, green: 246/255, blue: 249/255)
+        Color.white
     }
     
-    static var secondaryColor: Color {
-        Color(red: 116/255, green: 155/255, blue: 194/255)
+    static var button: Color {
+//        Color(red: 116/255, green: 155/255, blue: 194/255)
+//        Color(red: 43/255, green: 45/255, blue: 66/255)
+//        Color(red: 25/255, green: 50/255, blue: 60/255)
+        Color(red: 254/255, green: 168/255, blue: 47/255)
+    }
+    
+    static var boardGrid: Color {
+        Color(red: 25/255, green: 50/255, blue: 60/255)
+    }
+    
+    static var XSymbol: Color {
+        Color(red: 26/255, green: 172/255, blue: 172/255)
+//        Color(red: 43/255, green: 45/255, blue: 66/255)
+    }
+    
+    static var OSymbol: Color {
+        Color(red: 232/255, green: 106/255, blue: 146/255)
     }
 }
 
 struct GameView_Previews: PreviewProvider {
     static var previews: some View {
-        GameView()
+        GameView(gameMode: .ai)
     }
 }
 
