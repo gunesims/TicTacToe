@@ -51,8 +51,8 @@ struct TicTacToe {
     var playerOne = Player.playerOne
     var playerTwo = Player.playerTwo
     
-    var playerOneSymbol = Symbol.x
-    var playerTwoSymbol = Symbol.o
+    var playerOneSymbol = Symbol.none
+    var playerTwoSymbol = Symbol.none
     
     var playerOneScore = 0
     var playerTwoScore = 0

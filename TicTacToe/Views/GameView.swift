@@ -9,34 +9,75 @@
 import SwiftUI
 
 struct GameView: View {
-    let gameMode: GameMode
-    @StateObject private var ticTacToeGame = TicTacToeGame()
+    var gameMode: GameMode
+    var selectedSymbol: Symbol
+    
+    @EnvironmentObject var ticTacToeGame: TicTacToeGame
     
     var body: some View {
         VStack {
             Spacer()
             
-            ScoreView(ticTacToeGame: ticTacToeGame)
+            ScoreView()
             
             Spacer()
             
-            BoardView(ticTacToeGame: ticTacToeGame)
+            BoardView()
             
             Spacer()
             
-            ButtonView(ticTacToeGame: ticTacToeGame)
+            ButtonView()
             
             Spacer()
         }
         .background(Color.background)
         .onAppear {
-            ticTacToeGame.game.gameMode = gameMode
+            ticTacToeGame.setGameMode(gameMode: gameMode)
+            ticTacToeGame.setSymbols(selectedSymbol: selectedSymbol)
+            ticTacToeGame.resetGame()
+            
         }
     }
 }
 
+struct ScoreView: View {
+    @EnvironmentObject var ticTacToeGame: TicTacToeGame
+    
+    var body: some View {
+        VStack(spacing: 10) {
+            HStack(spacing: 20) {
+                VStack(spacing: 10) {
+                    Text("You")
+                        .foregroundStyle(ticTacToeGame.game.playerOneSymbol == Symbol.x ? Color.XSymbol : Color.OSymbol)
+                    Text("\(ticTacToeGame.getPlayerOneScore()) wins")
+                }
+                .foregroundColor(.button)
+                .bold()
+                .font(.title2)
+                
+                VStack(spacing: 10) {
+                    Text(ticTacToeGame.game.gameMode == .ai ? "AI" : "Friend" )
+                        .foregroundStyle(ticTacToeGame.game.playerOneSymbol != Symbol.x ? Color.XSymbol : Color.OSymbol)
+                    Text("\(ticTacToeGame.getPlayerTwoScore()) wins")
+                }
+                .foregroundColor(.button)
+                .bold()
+                .font(.title2)
+            }
+            
+            Text(ticTacToeGame.game.currentPlayer == .playerOne ? "Your Turn" : ticTacToeGame.game.gameMode == .ai ? "AI's Turn" : "Friend's Turn")
+                .foregroundStyle(ticTacToeGame.game.currentPlayer == .playerOne ? ticTacToeGame.game.playerOneSymbol == Symbol.x ? Color.XSymbol : Color.OSymbol : ticTacToeGame.game.playerOneSymbol != Symbol.x ? Color.XSymbol : Color.OSymbol)
+                .bold()
+                .font(.title2)
+            
+        }
+        .frame(width: 300, height: 120)
+    }
+}
+
 struct BoardView: View {
-    @StateObject var ticTacToeGame: TicTacToeGame
+    @EnvironmentObject var ticTacToeGame: TicTacToeGame
+    
     let columns = [GridItem(.flexible(),spacing: 10), GridItem(.flexible(),spacing: 10), GridItem(.flexible(),spacing: 10)]
     
     var body: some View {
@@ -60,39 +101,7 @@ struct BoardView: View {
     }
 }
 
-struct ScoreView: View {
-    @StateObject var ticTacToeGame: TicTacToeGame
-    
-    var body: some View {
-        ZStack {
-            RoundedRectangle(cornerRadius: 20)
-                .stroke(Color.button, lineWidth: 2)
-            
-            HStack(spacing: 20) {
-                VStack(spacing: 10) {
-                    Text("Player One")
-                    Text("\(ticTacToeGame.getPlayerOneScore())")
-                }
-                .foregroundColor(.button)
-                .bold()
-                .font(.title2)
-                
-                
-                Divider()
-                    .background(Color.button)
-                
-                VStack(spacing: 10) {
-                    Text("Player Two")
-                    Text("\(ticTacToeGame.getPlayerTwoScore())")
-                }
-                .foregroundColor(.button)
-                .bold()
-                .font(.title2)
-            }
-        }
-        .frame(width: 300, height: 120)
-    }
-}
+
 
 struct SquareView: View {
     let square: Square
@@ -119,7 +128,7 @@ struct SquareView: View {
 
 
 struct ButtonView: View {
-    @StateObject var ticTacToeGame: TicTacToeGame
+    @EnvironmentObject var ticTacToeGame: TicTacToeGame
     
     var body: some View {
         HStack(spacing: 10) {
@@ -154,6 +163,7 @@ struct ButtonView: View {
         }
     }
 }
+
 
 struct OSymbolView: View {
     @State private var drawingStroke: CGFloat = 0.0
@@ -233,11 +243,8 @@ extension Color {
     }
 }
 
-struct GameView_Previews: PreviewProvider {
-    static var previews: some View {
-        GameView(gameMode: .ai)
-    }
+#Preview {
+    GameView(gameMode: .ai, selectedSymbol: Symbol.x)
+        .environmentObject(TicTacToeGame())
 }
-
-
 

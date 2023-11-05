@@ -12,7 +12,29 @@ import Foundation
 class TicTacToeGame: ObservableObject {
     @Published var game = TicTacToe()
     
+    func setGameMode(gameMode: GameMode) {
+        game.gameMode = gameMode
+    }
+    
+    func setSymbols(selectedSymbol: Symbol) {
+        if selectedSymbol == .x {
+            game.playerOneSymbol = .x
+            game.playerTwoSymbol = .o
+        } else {
+            game.playerOneSymbol = .o
+            game.playerTwoSymbol = .x
+        }
+    }
+    
     func squareClicked(square: Square) {
+        guard game.gameMode != .none else {
+            return
+        }
+        
+        guard game.playerOneSymbol != .none && game.playerTwoSymbol != .none else {
+            return
+        }
+        
         if game.gameState == .none {
             initializeGame()
         }
@@ -119,6 +141,10 @@ class TicTacToeGame: ObservableObject {
         }
     }
     
+    func resetGame() {
+        resetBoard()
+        resetScore()
+    }
     
     func toggleCurrentPlayer() {
         if game.currentPlayer == Player.none {
