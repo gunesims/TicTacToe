@@ -16,30 +16,47 @@ class TicTacToeGame: ObservableObject {
         game.gameMode = gameMode
     }
     
-    func setSymbols(selectedSymbol: Symbol) {
-        if selectedSymbol == .x {
-            game.playerOneSymbol = .x
-            game.playerTwoSymbol = .o
+    func setupPlayers(selectedSymbol: Symbol) {
+        game.playerOne = Player(symbol: selectedSymbol)
+        
+        if selectedSymbol == .o {
+            game.playerTwo = Player(symbol: .x)
         } else {
-            game.playerOneSymbol = .o
-            game.playerTwoSymbol = .x
+            game.playerTwo = Player(symbol: .o)
         }
     }
     
+    func startGame() {
+        resetGame()
+        chooseFirstMovePlayer()
+        game.gameState = .playing
+        
+    }
+    
+    func chooseFirstMovePlayer() {
+        let firstMovePlayerNumber = Int.random(in: 0..<2)
+        
+        if firstMovePlayerNumber == 0 {
+            game.currentPlayer = game.playerOne
+        } else {
+            game.currentPlayer = game.playerTwo
+        }
+    }
+    
+    func getAIMove() {
+        
+    }
+    
     func squareClicked(square: Square) {
-        guard game.gameMode != .none else {
+        guard game.gameMode != nil else {
             return
         }
         
-        guard game.playerOneSymbol != .none && game.playerTwoSymbol != .none else {
+        guard game.playerOne != nil && game.playerTwo != nil else {
             return
         }
         
-        if game.gameState == .none {
-            initializeGame()
-        }
-        
-        if square.symbol != .none{
+        if square.symbol != nil {
             return
         }
         
@@ -89,7 +106,7 @@ class TicTacToeGame: ObservableObject {
     
     func checkDraw() -> Bool {
         for square in game.board {
-            if square.symbol == Symbol.none {
+            if square.symbol == nil {
                 return false
             }
         }
@@ -99,7 +116,7 @@ class TicTacToeGame: ObservableObject {
     
     func checkScore() {
         if game.gameState == .win {
-            if game.currentPlayer == .playerOne {
+            if game.currentPlayer == game.playerOne {
                 game.playerOneScore += 1
             } else {
                 game.playerTwoScore += 1
@@ -107,11 +124,6 @@ class TicTacToeGame: ObservableObject {
         } else if game.gameState == .draw {
             game.drawScore += 1
         }
-    }
-    
-    func initializeGame() {
-        game.gameState = .playing
-        game.currentPlayer = game.playerOne
     }
     
     func resetScore() {
@@ -129,25 +141,25 @@ class TicTacToeGame: ObservableObject {
     }
     
     
-    func getCurrentPlayerSymbol() -> Symbol {
-        game.currentPlayer == game.playerOne ? game.playerOneSymbol : game.playerTwoSymbol
+    func getCurrentPlayerSymbol() -> Symbol? {
+        game.currentPlayer == game.playerOne ? game.playerOne?.symbol : game.playerTwo?.symbol
     }
     
-    func resetBoard() {
+    func initializeBoard() {
         game.board.removeAll()
         
         for number in 0..<9 {
-            game.board.append(Square(symbol: .none, id: number))
+            game.board.append(Square(symbol: nil, id: number))
         }
     }
     
     func resetGame() {
-        resetBoard()
+        initializeBoard()
         resetScore()
     }
     
     func toggleCurrentPlayer() {
-        if game.currentPlayer == Player.none {
+        if game.currentPlayer == nil {
             return
         } else if game.currentPlayer == game.playerOne {
             game.currentPlayer = game.playerTwo
@@ -156,4 +168,18 @@ class TicTacToeGame: ObservableObject {
         }
     }
  
+//    func score(game, depth) {
+//        if game.win(player) {
+//            return 10 - depth
+//        } else if game.win(opponent) {
+//            return depth - 10
+//        } else {
+//            return 0
+//        }
+//    }
+//    
+//    func minimax(game, depth) {
+//        return score(game,)
+//        
+//    }
 }

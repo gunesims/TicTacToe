@@ -11,62 +11,71 @@ import Foundation
 enum Symbol: String {
     case x = "X"
     case o = "O"
-    case none = ""
-}
-
-enum Player {
-    case playerOne
-    case playerTwo
-    case none
 }
 
 enum GameMode {
-    case ai
+    case easyAI
+    case mediumAI
+    case hardAI
     case friend
-    case none
+}
+
+enum AIGameMode {
+    case easy
+    case medium
+    case hard
+}
+
+enum SimpleGameMode {
+    case AI
+    case friend
 }
 
 enum GameState {
     case playing
     case win
     case draw
-    case none
+}
+
+struct Player: Equatable {
+    var symbol: Symbol
+    var boardPositions = Set<Int>()
+    
+    static func ==(lhs: Player, rhs: Player) -> Bool {
+        return lhs.symbol == rhs.symbol && lhs.boardPositions == rhs.boardPositions
+    }
 }
 
 struct Square: Hashable {
-    var symbol: Symbol
+    var symbol: Symbol?
     let id: Int
 }
 
-
 struct TicTacToe {
     var board = Array<Square>()
-    var gameEnded = false
-    var winner = Player.none
-    var gameMode = GameMode.none
-    
-    var gameState = GameState.none
-    var currentPlayer = Player.none
-    
-    var playerOne = Player.playerOne
-    var playerTwo = Player.playerTwo
-    
-    var playerOneSymbol = Symbol.none
-    var playerTwoSymbol = Symbol.none
     
     var playerOneScore = 0
     var playerTwoScore = 0
     var drawScore = 0
     
+    var winner: Player?
+    var gameMode: GameMode?
+    
+    var gameEnded = false
+    
+    var gameState: GameState?
+    var currentPlayer: Player?
+    
+    var playerOne: Player?
+    var playerTwo: Player?
+    
     let winningCombinations = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]]
     
     init() {
         for number in 0..<9 {
-            self.board.append(Square(symbol: .none, id: number))
+            self.board.append(Square(symbol: nil, id: number))
         }
     }
-    
-
 }
 
 

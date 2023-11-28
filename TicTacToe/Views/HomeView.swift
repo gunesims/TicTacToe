@@ -9,8 +9,7 @@
 import SwiftUI
 
 struct HomeView: View {
-//    @EnvironmentObject var ticTacToeGame: TicTacToeGame
-    @State private var selectedSymbol = Symbol.x
+    
     
     var body: some View {
         NavigationView {
@@ -20,7 +19,7 @@ struct HomeView: View {
                     .bold()
                 
                 NavigationLink {
-                    GameView(gameMode: .ai, selectedSymbol: selectedSymbol)
+                    GameSetupView(simpleGameMode: .AI)
                 } label: {
                     Text("AI")
                         .font(.largeTitle)
@@ -32,7 +31,7 @@ struct HomeView: View {
                 }
                 
                 NavigationLink {
-                    GameView(gameMode: .friend, selectedSymbol: selectedSymbol)
+                    GameSetupView(simpleGameMode: .friend)
                 } label: {
                     Text("Friend")
                         .font(.largeTitle)
@@ -43,29 +42,13 @@ struct HomeView: View {
                             .fill(Color.button))
                 }
                 
-                HStack {
-                    Text("You")
-                    SymbolPicker(selectedSymbol: $selectedSymbol)
-                        .frame(width: 200)
-                }
+                
             }
         }
     }
 }
 
-struct SymbolPicker: View {
-    @Binding var selectedSymbol: Symbol
-    
-    var body: some View {
-        Picker("Symbol", selection: $selectedSymbol) {
-            Text("X")
-                .tag(Symbol.x)
-            Text("O")
-                .tag(Symbol.o)
-        }
-        .pickerStyle(.segmented)
-    }
-}
+
 
 #Preview {
     HomeView()
