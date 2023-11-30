@@ -77,11 +77,11 @@ struct ScoreView: View {
         if let gameMode = ticTacToeGame.game.gameMode {
             switch gameMode {
             case .easyAI:
-                return "Easy AI"
+                return "AI (Easy)"
             case .mediumAI:
-                return "Medium AI"
+                return "AI (Medium)"
             case .hardAI:
-                return "Hard AI"
+                return "AI (Hard)"
             case .friend:
                 return "Friend"
             }
@@ -103,27 +103,47 @@ struct BoardView: View {
         LazyVGrid(columns: columns, spacing: 10) {
             ForEach(ticTacToeGame.game.board, id: \.self) { item in
                 SquareView(square: item)
+                    .disabled(item.disabled)
                     .onTapGesture {
                         ticTacToeGame.squareClicked(square: item)
                     }
             }
         }
+        .disabled(ticTacToeGame.game.boardDisabled)
         .background(Color.boardGrid)
         .padding()
         .alert("Game Over", isPresented: $ticTacToeGame.game.gameEnded) {
             Button("OK", role: .cancel) {
-                ticTacToeGame.initializeBoard()
+                ticTacToeGame.restartGame()
             }
         } message: {
-            Text(Alerts.winnerMessage(game: ticTacToeGame.game))
+            Text(Alerts.gameEndedMessage(game: ticTacToeGame.game))
         }
         
     }
 }
 
 struct Alerts {
-    static func winnerMessage(game: TicTacToe) -> String {
-        game.gameState == .win ? "Winner is \(game.winner == game.playerOne ? "You" : game.gameMode == .friend ? "Friend" : "AI")" : "It's a draw"
+    static func gameEndedMessage(game: TicTacToe) -> String {
+        if game.gameState == .win {
+            if game.winner == game.playerOne {
+                return "Winner is You"
+            } else if game.winner == game.playerTwo {
+                if game.gameMode == .friend {
+                    return "Winner is Friend"
+                } else if game.gameMode == .easyAI {
+                    return "Winner is AI (Easy)"
+                } else if game.gameMode == .mediumAI {
+                    return "Winner is AI (Medium)"
+                } else if game.gameMode == .hardAI {
+                    return "Winner is AI (Hard)"
+                }
+            }
+        } else if game.gameState == .draw {
+            return "It's a draw"
+        }
+        
+        return "Error"
     }
 }
 
