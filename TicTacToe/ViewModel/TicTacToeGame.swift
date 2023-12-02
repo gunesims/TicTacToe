@@ -30,12 +30,7 @@ class TicTacToeGame: ObservableObject {
         resetGame()
         chooseFirstMovePlayer()
         game.gameState = .playing
-        
-        if gameModeIsAI() {
-            if game.currentPlayer == game.playerTwo {
-                getAIMove()
-            }
-        }
+        checkIfAITurn()
     }
     
     func gameModeIsAI() -> Bool {
@@ -62,11 +57,13 @@ class TicTacToeGame: ObservableObject {
     }
     
     func getAIMove() {
+        self.game.boardDisabled = true
+        
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-            self.game.boardDisabled = true
             self.randomAIMove()
             self.game.boardDisabled = false
         }
+        
     }
     
     func randomAIMove() {
@@ -95,7 +92,7 @@ class TicTacToeGame: ObservableObject {
     }
     
     func squareClicked(square: Square) {
-        game.boardDisabled = true
+        
         guard game.gameMode != nil else {
             return
         }
@@ -116,12 +113,12 @@ class TicTacToeGame: ObservableObject {
             return
         }
         
-        game.gameState = .makingMove
+        guard game.isAnimationFinished else {
+            return
+        }
         
+        game.boardDisabled = true
         addMoveToBoard(squareID: square.id)
-        
-        game.boardDisabled = false
-        game.gameState = .playing
         
         if checkWinner() {
             game.winner = game.currentPlayer
@@ -136,6 +133,7 @@ class TicTacToeGame: ObservableObject {
             return
         }
         
+        game.boardDisabled = false
         toggleCurrentPlayer()
      
     }
@@ -145,8 +143,15 @@ class TicTacToeGame: ObservableObject {
             return
         }
         
+        game.isAnimationFinished = false
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            self.game.isAnimationFinished = true
+        }
+
         game.board[squareID].symbol = getCurrentPlayerSymbol()
-        game.board[squareID].disabled = true
+        
+        
     }
     
     
@@ -226,10 +231,7 @@ class TicTacToeGame: ObservableObject {
         }
     }
     
-    func restartGame() {
-        initializeBoard()
-        toggleCurrentPlayer()
-        
+    func checkIfAITurn() {
         if gameModeIsAI() {
             if game.currentPlayer == game.playerTwo {
                 getAIMove()
@@ -237,9 +239,20 @@ class TicTacToeGame: ObservableObject {
         }
     }
     
+    func restartGame() {
+        initializeBoard()
+        toggleCurrentPlayer()
+        game.gameState = .playing
+        
+        game.boardDisabled = false
+        checkIfAITurn()
+    }
+    
     func resetGame() {
         initializeBoard()
         resetScore()
+        game.gameState = .playing
+        game.boardDisabled = false
     }
     
     func toggleCurrentPlayer() {

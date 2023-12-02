@@ -33,7 +33,6 @@ enum SimpleGameMode {
 
 enum GameState {
     case playing
-    case makingMove
     case win
     case draw
 }
@@ -49,31 +48,29 @@ struct Player: Equatable {
 
 struct Square: Hashable {
     var symbol: Symbol?
-    var disabled = false
     let id: Int
     
 }
 
 struct TicTacToe {
+    let winningCombinations = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]]
+    
     var board = Array<Square>()
     var boardDisabled = false
+    var gameEnded = false
+    var isAnimationFinished = true
     
     var playerOneScore = 0
     var playerTwoScore = 0
     var drawScore = 0
     
-    var winner: Player?
-    var gameMode: GameMode?
-    
-    var gameEnded = false
-    
-    var gameState: GameState?
-    var currentPlayer: Player? 
-    
+    var currentPlayer: Player?
     var playerOne: Player?
     var playerTwo: Player?
+    var winner: Player?
     
-    let winningCombinations = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]]
+    var gameMode: GameMode?
+    var gameState: GameState?
     
     init() {
         for number in 0..<9 {

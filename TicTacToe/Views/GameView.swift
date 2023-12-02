@@ -103,7 +103,6 @@ struct BoardView: View {
         LazyVGrid(columns: columns, spacing: 10) {
             ForEach(ticTacToeGame.game.board, id: \.self) { item in
                 SquareView(square: item)
-                    .disabled(item.disabled)
                     .onTapGesture {
                         ticTacToeGame.squareClicked(square: item)
                     }
@@ -147,27 +146,7 @@ struct Alerts {
     }
 }
 
-struct SquareView: View {
-    let square: Square
-    
-    var body: some View {
-        ZStack {
-            Rectangle()
-                .fill(.clear)
-            if square.symbol == .o {
-                OSymbolView()
-                    .padding(20)
-            } else if square.symbol == .x {
-                XSymbolView()
-                    .padding(25)
-            }
-            
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .aspectRatio(1, contentMode: .fit)
-        .background(Color.background)
-    }
-}
+
 
 
 
@@ -185,7 +164,6 @@ struct ButtonView: View {
                 Button {
                     ticTacToeGame.initializeBoard()
                 } label: {
-                    
                     ZStack {
                         RoundedRectangle(cornerRadius: 10)
                             .foregroundColor(.button)
@@ -223,6 +201,29 @@ struct ButtonView: View {
     }
 }
 
+
+struct SquareView: View {
+    let square: Square
+    
+    var body: some View {
+        ZStack {
+            Rectangle()
+                .fill(.clear)
+            if square.symbol == .o {
+                OSymbolView()
+                    .padding(20)
+            } else if square.symbol == .x {
+                XSymbolView()
+                    .padding(25)
+            }
+            
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .aspectRatio(1, contentMode: .fit)
+        .background(Color.background)
+    }
+}
+
 struct OSymbolView: View {
     @State private var drawingStroke: CGFloat = 0.0
     
@@ -254,7 +255,7 @@ struct XSymbolView: View {
             .stroke(style: StrokeStyle(lineWidth: 20, lineCap: .round))
             .fill(Color.XSymbol)
             .animation(animation, value: drawingStroke)
-            .onAppear {
+            .task {
                 drawingStroke = CGFloat(1.0)
             }
     }
