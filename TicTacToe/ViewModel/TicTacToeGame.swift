@@ -8,7 +8,6 @@
 
 import Foundation
 
-
 class TicTacToeGame: ObservableObject {
     @Published var game = TicTacToe()
     
@@ -57,138 +56,222 @@ class TicTacToeGame: ObservableObject {
     }
     
     func getAIMove() {
-        self.game.boardDisabled = true
+//        self.game.boardDisabled = true
         
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-            self.randomAIMove()
-            self.game.boardDisabled = false
+            self.findWhichAIDifficultyMove()
         }
         
     }
     
-    func randomAIMove() {
-        var randomMoveId = Int.random(in: 0..<9)
-        
-        while game.board[randomMoveId].symbol != nil {
-            randomMoveId = Int.random(in: 0..<9)
-        }
-        
-        if let squareForAIMove = getSquareFromId(id: randomMoveId) {
-            squareClicked(square: squareForAIMove)
+    func findWhichAIDifficultyMove() {
+        switch game.gameMode {
+        case .easyAI:
+            easyAIMove()
+        case .mediumAI:
+            mediumAIMove()
+        case .hardAI:
+            hardAIMove()
+        default:
+            easyAIMove()
         }
     }
     
-    func getSquareFromId(id: Int) -> Square? {
-        guard id >= 0 && id < 9 else {
-            return nil
+    func easyAIMove() {
+        if let move = getRandomMove() {
+            squareClicked(row: move.0, col: move.1)
         }
-        for square in game.board {
-            if square.id == id {
-                return square
+    }
+    
+    func mediumAIMove() {
+        if let move = getRandomMove() {
+            squareClicked(row: move.0, col: move.1)
+        }
+    }
+    
+    func hardAIMove() {
+        if let aiMove = minimax() {
+            squareClicked(row: aiMove.0, col: aiMove.1)
+            print("AI Best Move")
+        } else {
+            if let move = getRandomMove() {
+                squareClicked(row: move.0, col: move.1)
+                print("AI Random Move")
             }
         }
-        
-        return nil
     }
     
-    func squareClicked(square: Square) {
-        
-        guard game.gameMode != nil else {
-            return
+    private var miniMaxBoard: [[Player?]] = Array(repeating: Array(repeating: .none, count: 3), count: 3)
+    
+    private func copyBoardForMiniMax() {
+        for row in 0..<3 {
+            for col in 0..<3 {
+                miniMaxBoard[row][col] = game.board[row][col]
+            }
         }
-        
-        guard game.playerOne != nil && game.playerTwo != nil else {
-            return
-        }
-        
-        guard square.symbol == nil else {
-            return
-        }
-        
-        guard game.gameState == .playing else {
-            return
-        }
-        
-        if game.gameEnded {
-            return
-        }
-        
-        guard game.isAnimationFinished else {
-            return
-        }
-        
-        game.boardDisabled = true
-        addMoveToBoard(squareID: square.id)
-        
-        if checkWinner() {
-            game.winner = game.currentPlayer
-            game.gameState = .win
-            checkScore()
-            game.gameEnded = true
-            return
-        } else if checkDraw() {
-            game.gameState = .draw
-            checkScore()
-            game.gameEnded = true
-            return
-        }
-        
-        game.boardDisabled = false
-        toggleCurrentPlayer()
-     
     }
     
-    func addMoveToBoard(squareID: Int) {
-        guard game.board[squareID].symbol == nil else {
-            return
-        }
+    func minimax() -> (Int, Int)? {
+        copyBoardForMiniMax()
+        var bestScore = Int.min
+        var bestMove: (Int, Int)? = nil
         
-        game.isAnimationFinished = false
-        
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-            self.game.isAnimationFinished = true
-        }
-
-        game.board[squareID].symbol = getCurrentPlayerSymbol()
-        
-        
-    }
-    
-    
-    func checkWinner() -> Bool {
-        for combo in game.winningCombinations {
-            let currentSymbol = game.board[combo[0]].symbol
-            var counter = 0
-            
-            for index in combo {
-                if currentSymbol == .none {
-                    break
-                } else if currentSymbol == game.board[index].symbol {
-                    counter += 1
-                } else {
-                    break
+        for row in 0..<3 {
+            for col in 0..<3 {
+                if miniMaxBoard[row][col] == nil {
+                    miniMaxBoard[row][col] = game.playerTwo
+                    let score = minimaxHelper(depth: 0, isMaximizing: false)
+                    miniMaxBoard[row][col] = nil
+                    
+                    if score > bestScore {
+                        bestScore = score
+                        bestMove = (row, col)
+                    }
                 }
             }
-            
-            if counter == 3 {
+        }
+        return bestMove
+    }
+    
+    func minimaxHelper(depth: Int, isMaximizing: Bool) -> Int {
+        if isWinnerMiniMax(player: game.playerTwo!) {
+            return 1
+        } else if isWinnerMiniMax(player: game.playerOne!) {
+            return -1
+        } else if isDrawMiniMax() {
+            return 0
+        }
+
+        if isMaximizing {
+            var maxEval = Int.min
+            for row in 0..<3 {
+                for col in 0..<3 {
+                    if miniMaxBoard[row][col] == nil {
+                        miniMaxBoard[row][col] = game.playerTwo
+                        let eval = minimaxHelper(depth: depth + 1, isMaximizing: false)
+                        miniMaxBoard[row][col] = nil
+                        maxEval = max(maxEval, eval)
+                    }
+                }
+            }
+            return maxEval
+        } else {
+            var minEval = Int.max
+            for row in 0..<3 {
+                for col in 0..<3 {
+                    if miniMaxBoard[row][col] == nil {
+                        miniMaxBoard[row][col] = game.playerOne
+                        let eval = minimaxHelper(depth: depth + 1, isMaximizing: true)
+                        miniMaxBoard[row][col] = nil
+                        minEval = min(minEval, eval)
+                    }
+                }
+            }
+            return minEval
+        }
+    }
+    
+    func isWinnerMiniMax(player: Player) -> Bool {
+        for index in 0..<3 {
+            if miniMaxBoard[index][0] == player && miniMaxBoard[index][1] == player && miniMaxBoard[index][2] == player {
                 return true
+            }
+            
+            if miniMaxBoard[0][index] == player && miniMaxBoard[1][index] == player && miniMaxBoard[2][index] == player {
+                return true
+            }
+        }
+        
+        if miniMaxBoard[0][0] == player && miniMaxBoard[1][1] == player && miniMaxBoard[2][2] == player {
+            return true
+        }
+        
+        if miniMaxBoard[0][2] == player && miniMaxBoard[1][1] == player && miniMaxBoard[2][0] == player {
+            return true
+        }
+        
+        return false
+    }
+    
+    func isDrawMiniMax() -> Bool {
+        for row in 0..<3 {
+            for col in 0..<3 {
+                if miniMaxBoard[row][col] == nil {
+                    return false
+                }
+            }
+        }
+        return true
+    }
+    
+    
+    
+    
+//    func isGameOver() -> Bool {
+//        if isWinner(player) || isDraw() {
+//            return true
+//        }
+//        
+//        return false
+//    }
+    
+    func getAvailableMoves() -> [(Int, Int)] {
+        var movesLeft = [(Int, Int)]()
+        
+        for row in 0..<3 {
+            for col in 0..<3 {
+                if game.board[row][col] == nil {
+                    movesLeft.append((row, col))
+                }
+            }
+        }
+        
+        return movesLeft
+    }
+
+    func boardContains(player: Player) -> Bool {
+        for row in 0..<3 {
+            for col in 0..<3 {
+                if game.board[row][col] == player {
+                    return true
+                }
             }
         }
         
         return false
     }
     
-    func checkDraw() -> Bool {
-        for square in game.board {
-            if square.symbol == nil {
-                return false
+    func isWinner(player: Player) -> Bool {
+        for index in 0..<3 {
+            if game.board[index][0] == player && game.board[index][1] == player && game.board[index][2] == player {
+                return true
+            } else if game.board[0][index] == player && game.board[1][index] == player && game.board[2][index] == player {
+                return true
             }
         }
         
-        return true
+        if game.board[0][0] == player && game.board[1][1] == player && game.board[2][2] == player {
+            return true
+        } else if game.board[0][2] == player && game.board[1][1] == player && game.board[2][0] == player {
+            return true
+        }
+        
+        return false
     }
     
-    func checkScore() {
+    func isDraw() -> Bool {
+        for row in 0..<3 {
+            for col in 0..<3 {
+                if game.board[row][col] == nil {
+                    return false
+                }
+            }
+        }
+        return true
+    }
+
+    
+    func updateScore() {
         if game.gameState == .win {
             if game.currentPlayer == game.playerOne {
                 game.playerOneScore += 1
@@ -199,6 +282,74 @@ class TicTacToeGame: ObservableObject {
             game.drawScore += 1
         }
     }
+    
+    func getRandomMove() -> (Int, Int)? {
+        let moves = getAvailableMoves()
+        
+        if let randomMove = moves.randomElement() {
+            return (randomMove.0, randomMove.1)
+        } else {
+            return nil
+        }
+    }
+    
+    func squareClicked(row: Int, col: Int) {
+        guard game.gameMode != nil && game.playerOne != nil && game.playerTwo != nil else {
+            return
+        }
+        
+        guard game.board[row][col] == nil else {
+            return
+        }
+        
+        guard game.gameState == .playing else {
+            return
+        }
+        
+        guard !game.gameEnded else {
+            return
+        }
+        
+        guard game.isAnimationFinished else {
+            return
+        }
+
+//        game.boardDisabled = true
+        addMoveToBoard(row: row, col: col)
+        checkGameStatus()
+        toggleCurrentPlayer()
+    }
+    
+    func checkGameStatus() {
+        if let player = game.currentPlayer, isWinner(player: player) {
+            game.winner = player
+            game.gameState = .win
+            updateScore()
+            game.gameEnded = true
+            return
+        } else if isDraw() {
+            game.gameState = .draw
+            updateScore()
+            game.gameEnded = true
+            return
+        }
+    }
+    
+    
+    func addMoveToBoard(row: Int, col: Int) {
+        guard game.board[row][col] == nil else {
+            return
+        }
+        
+        game.isAnimationFinished = false
+        
+        game.board[row][col] = game.currentPlayer
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            self.game.isAnimationFinished = true
+        }
+    }
+
     
     func resetScore() {
         game.playerOneScore = 0
@@ -213,8 +364,7 @@ class TicTacToeGame: ObservableObject {
     func getPlayerTwoScore() -> Int {
         game.playerTwoScore
     }
-    
-    
+        
     func getCurrentPlayerSymbol() -> Symbol? {
         if let currentSymbol = game.currentPlayer?.symbol {
             return currentSymbol
@@ -225,10 +375,7 @@ class TicTacToeGame: ObservableObject {
     
     func initializeBoard() {
         game.board.removeAll()
-        
-        for number in 0..<9 {
-            game.board.append(Square(symbol: nil, id: number))
-        }
+        game.board = Array(repeating: Array(repeating: .none, count: 3), count: 3)
     }
     
     func checkIfAITurn() {
@@ -241,18 +388,17 @@ class TicTacToeGame: ObservableObject {
     
     func restartGame() {
         initializeBoard()
-        toggleCurrentPlayer()
         game.gameState = .playing
-        
-        game.boardDisabled = false
-        checkIfAITurn()
+        toggleCurrentPlayer()
+//        game.boardDisabled = false
     }
     
     func resetGame() {
         initializeBoard()
         resetScore()
+        toggleCurrentPlayer()
         game.gameState = .playing
-        game.boardDisabled = false
+//        game.boardDisabled = false
     }
     
     func toggleCurrentPlayer() {
@@ -268,21 +414,7 @@ class TicTacToeGame: ObservableObject {
             }
         } else {
             game.currentPlayer = game.playerOne
+//            game.boardDisabled = false
         }
     }
- 
-//    func score(game, depth) {
-//        if game.win(player) {
-//            return 10 - depth
-//        } else if game.win(opponent) {
-//            return depth - 10
-//        } else {
-//            return 0
-//        }
-//    }
-//    
-//    func minimax(game, depth) {
-//        return score(game,)
-//        
-//    }
 }

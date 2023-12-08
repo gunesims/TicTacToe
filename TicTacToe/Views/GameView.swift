@@ -95,17 +95,18 @@ struct ScoreView: View {
 
 struct BoardView: View {
     @EnvironmentObject var ticTacToeGame: TicTacToeGame
-    @State private var gameOver = false
     
     let columns = [GridItem(.flexible(),spacing: 10), GridItem(.flexible(),spacing: 10), GridItem(.flexible(),spacing: 10)]
     
     var body: some View {
         LazyVGrid(columns: columns, spacing: 10) {
-            ForEach(ticTacToeGame.game.board, id: \.self) { item in
-                SquareView(square: item)
-                    .onTapGesture {
-                        ticTacToeGame.squareClicked(square: item)
-                    }
+            ForEach(0..<3) { row in
+                ForEach(0..<3) { col in
+                    SquareView(player: ticTacToeGame.game.board[row][col])
+                        .onTapGesture {
+                            ticTacToeGame.squareClicked(row: row, col: col)
+                        }
+                }
             }
         }
         .disabled(ticTacToeGame.game.boardDisabled)
@@ -203,16 +204,16 @@ struct ButtonView: View {
 
 
 struct SquareView: View {
-    let square: Square
+    let player: Player?
     
     var body: some View {
         ZStack {
             Rectangle()
                 .fill(.clear)
-            if square.symbol == .o {
+            if player?.symbol == .o {
                 OSymbolView()
                     .padding(20)
-            } else if square.symbol == .x {
+            } else if player?.symbol == .x {
                 XSymbolView()
                     .padding(25)
             }
@@ -276,15 +277,10 @@ struct XSymbol: Shape {
 
 extension Color {
     static var background: Color {
-        //        Color(red: 246/255, green: 244/255, blue: 235/255)
-        //        Color(red: 241/255, green: 246/255, blue: 249/255)
         Color.white
     }
     
     static var button: Color {
-        //        Color(red: 116/255, green: 155/255, blue: 194/255)
-        //        Color(red: 43/255, green: 45/255, blue: 66/255)
-        //        Color(red: 25/255, green: 50/255, blue: 60/255)
         Color(red: 254/255, green: 168/255, blue: 47/255)
     }
     
@@ -294,7 +290,6 @@ extension Color {
     
     static var XSymbol: Color {
         Color(red: 26/255, green: 172/255, blue: 172/255)
-        //        Color(red: 43/255, green: 45/255, blue: 66/255)
     }
     
     static var OSymbol: Color {
@@ -303,7 +298,7 @@ extension Color {
 }
 
 #Preview {
-    GameView(gameMode: .easyAI, selectedSymbol: Symbol.x)
+    GameView(gameMode: .hardAI, selectedSymbol: Symbol.x)
         .environmentObject(TicTacToeGame())
 }
 

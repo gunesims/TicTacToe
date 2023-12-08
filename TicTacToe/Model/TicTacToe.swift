@@ -39,23 +39,14 @@ enum GameState {
 
 struct Player: Equatable {
     var symbol: Symbol
-    var boardPositions = Set<Int>()
     
     static func ==(lhs: Player, rhs: Player) -> Bool {
-        return lhs.symbol == rhs.symbol && lhs.boardPositions == rhs.boardPositions
+        return lhs.symbol == rhs.symbol
     }
 }
 
-struct Square: Hashable {
-    var symbol: Symbol?
-    let id: Int
-    
-}
-
-struct TicTacToe {
-    let winningCombinations = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]]
-    
-    var board = Array<Square>()
+struct TicTacToe {    
+    var board: [[Player?]] = Array(repeating: Array(repeating: .none, count: 3), count: 3)
     var boardDisabled = false
     var gameEnded = false
     var isAnimationFinished = true
@@ -64,19 +55,23 @@ struct TicTacToe {
     var playerTwoScore = 0
     var drawScore = 0
     
-    var currentPlayer: Player?
+    var currentPlayer: Player? {
+        didSet {
+            if currentPlayer == playerTwo {
+                boardDisabled = true
+                print("Board Disabled")
+            } else if currentPlayer == playerOne {
+                boardDisabled = false
+                print("Board Enabled")
+            }
+        }
+    }
     var playerOne: Player?
     var playerTwo: Player?
     var winner: Player?
     
     var gameMode: GameMode?
     var gameState: GameState?
-    
-    init() {
-        for number in 0..<9 {
-            self.board.append(Square(symbol: nil, id: number))
-        }
-    }
 }
 
 
