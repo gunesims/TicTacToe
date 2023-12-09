@@ -57,10 +57,10 @@ struct TicTacToe {
     
     var currentPlayer: Player? {
         didSet {
-            if currentPlayer == playerTwo {
+            if currentPlayer == playerTwo && gameMode != .friend {
                 boardDisabled = true
                 print("Board Disabled")
-            } else if currentPlayer == playerOne {
+            } else if currentPlayer == playerOne && gameMode != .friend  {
                 boardDisabled = false
                 print("Board Enabled")
             }
