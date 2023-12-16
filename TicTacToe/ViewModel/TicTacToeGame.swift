@@ -85,7 +85,9 @@ class TicTacToeGame: ObservableObject {
     }
     
     func mediumAIMove() {
-        if let aiMove = minimax() {
+        let random = Bool.random()
+        
+        if random, let aiMove = minimax() {
             squareClicked(row: aiMove.0, col: aiMove.1)
             print("AI Best Move")
         } else {
