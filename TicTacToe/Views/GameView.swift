@@ -32,6 +32,7 @@ struct GameView: View {
         }
         .background(Color.background)
         .onAppear {
+            ticTacToeGame.game = TicTacToe()
             ticTacToeGame.setGameMode(gameMode: gameMode)
             ticTacToeGame.setupPlayers(selectedSymbol: selectedSymbol)
             ticTacToeGame.startGame()
@@ -111,7 +112,7 @@ struct BoardView: View {
         }
         .disabled(ticTacToeGame.game.boardDisabled)
         .background(Color.boardGrid)
-        .padding()
+        .padding(5)
         .alert("Game Over", isPresented: $ticTacToeGame.game.gameEnded) {
             Button("OK", role: .cancel) {
                 ticTacToeGame.restartGame()
@@ -170,6 +171,7 @@ struct ButtonView: View {
                             .foregroundColor(.button)
                         Text("Restart Game")
                             .bold()
+//                            .font(.title3)
                     }
                     .frame(width: 150, height: 50)
                     .foregroundColor(.background)
@@ -184,6 +186,7 @@ struct ButtonView: View {
                             .foregroundColor(.button)
                         Text("Reset Score")
                             .bold()
+//                            .font(.title3)
                     }
                     .frame(width: 150, height: 50)
                     .foregroundColor(.background)

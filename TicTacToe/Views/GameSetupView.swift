@@ -52,8 +52,35 @@ struct GameSetupView: View {
             }
             
         }
+        .onAppear {
+            setup()
+        }
+        .onDisappear {
+            saveAIGameMode()
+        }
+    }
+    
+    func setup() {
+        if let aiDifficulty = retrieveAIGameMode() {
+            selectedAIDifficulty = aiDifficulty
+        }
+    }
+    
+    func saveAIGameMode() {
+        let key = "aiGameMode"
+        UserDefaults.standard.set(selectedAIDifficulty.rawValue, forKey: key)
+    }
+    
+    func retrieveAIGameMode() -> AIGameMode? {
+        let key = "aiGameMode"
+        if let rawValue = UserDefaults.standard.string(forKey: key), let value = AIGameMode(rawValue: rawValue) {
+            return value
+        }
+        return nil
     }
 }
+
+
 
 struct AIDifficultyPicker: View {
     @Binding var selectedDifficulty: AIGameMode

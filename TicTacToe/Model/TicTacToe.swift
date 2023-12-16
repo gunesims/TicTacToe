@@ -20,7 +20,7 @@ enum GameMode {
     case friend
 }
 
-enum AIGameMode {
+enum AIGameMode: String {
     case easy
     case medium
     case hard

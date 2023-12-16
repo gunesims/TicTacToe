@@ -25,8 +25,9 @@ class TicTacToeGame: ObservableObject {
         }
     }
     
+    
     func startGame() {
-        resetGame()
+//        resetGame()
         chooseFirstMovePlayer()
         game.gameState = .playing
         checkIfAITurn()
@@ -84,13 +85,21 @@ class TicTacToeGame: ObservableObject {
     }
     
     func mediumAIMove() {
-        if let move = getRandomMove() {
-            squareClicked(row: move.0, col: move.1)
+        if let aiMove = minimax() {
+            squareClicked(row: aiMove.0, col: aiMove.1)
+            print("AI Best Move")
+        } else {
+            if let move = getRandomMove() {
+                squareClicked(row: move.0, col: move.1)
+                print("AI Random Move")
+            }
         }
     }
     
     func hardAIMove() {
-        if let aiMove = minimax() {
+        if game.board[1][1] == nil {
+            squareClicked(row: 1, col: 1)
+        } else if let aiMove = minimax() {
             squareClicked(row: aiMove.0, col: aiMove.1)
             print("AI Best Move")
         } else {
@@ -108,6 +117,19 @@ class TicTacToeGame: ObservableObject {
             for col in 0..<3 {
                 miniMaxBoard[row][col] = game.board[row][col]
             }
+        }
+    }
+    
+    func printBoardMiniMax() {
+        for row in 0..<3 {
+            for col in 0..<3 {
+                if let symbol = miniMaxBoard[row][col]?.symbol {
+                    print(symbol,separator: " | ", terminator: "")
+                } else {
+                    print("-", separator: " | ", terminator: "")
+                }
+            }
+            print("")
         }
     }
     
@@ -134,12 +156,17 @@ class TicTacToeGame: ObservableObject {
     }
     
     func minimaxHelper(depth: Int, isMaximizing: Bool) -> Int {
+//        print("depth : \(depth)")
+//        printBoardMiniMax()
+//        print("\(isMaximizing) : \(depth)")
         if isWinnerMiniMax(player: game.playerTwo!) {
             return 1
         } else if isWinnerMiniMax(player: game.playerOne!) {
             return -1
         } else if isDrawMiniMax() {
             return 0
+        } else if game.gameMode == .mediumAI && depth == 1 {
+            return 1
         }
 
         if isMaximizing {
@@ -203,17 +230,6 @@ class TicTacToeGame: ObservableObject {
         }
         return true
     }
-    
-    
-    
-    
-//    func isGameOver() -> Bool {
-//        if isWinner(player) || isDraw() {
-//            return true
-//        }
-//        
-//        return false
-//    }
     
     func getAvailableMoves() -> [(Int, Int)] {
         var movesLeft = [(Int, Int)]()
@@ -314,10 +330,8 @@ class TicTacToeGame: ObservableObject {
             return
         }
 
-//        game.boardDisabled = true
         addMoveToBoard(row: row, col: col)
         checkGameStatus()
-        toggleCurrentPlayer()
     }
     
     func checkGameStatus() {
@@ -332,6 +346,8 @@ class TicTacToeGame: ObservableObject {
             updateScore()
             game.gameEnded = true
             return
+        } else {
+            toggleCurrentPlayer()
         }
     }
     
